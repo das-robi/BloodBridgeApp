@@ -57,7 +57,7 @@ public class RegisterActivity extends AppCompatActivity {
         });
 
 
-        apiServices = RetrofitClient.getRetrofitInstance()
+        apiServices = RetrofitClient.getRetrofitInstance(this)
                 .create(APIServices.class);
     }
 

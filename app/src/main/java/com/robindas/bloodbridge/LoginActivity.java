@@ -15,6 +15,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.robindas.bloodbridge.API.APIServices;
 import com.robindas.bloodbridge.API.RetrofitClient;
+import com.robindas.bloodbridge.API.TokenManager;
 import com.robindas.bloodbridge.Model.LoginRequest;
 
 import retrofit2.Call;
@@ -52,7 +53,7 @@ public class LoginActivity extends AppCompatActivity {
         loginBtn = findViewById(R.id.lgnBtn);
 
 
-        apiServices = RetrofitClient.getRetrofitInstance()
+        apiServices = RetrofitClient.getRetrofitInstance(this)
                 .create(APIServices.class);
 
 
@@ -99,6 +100,12 @@ public class LoginActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null){
 
                     String token = response.body();
+
+                    TokenManager tokenManager = new TokenManager(LoginActivity.this);
+                    //save token
+                    tokenManager.saveToken(token);
+                    //Check Token save
+                    Log.d("JWT_Token: ", tokenManager.getToken());
 
                     Toast.makeText(LoginActivity.this, "login successful!", Toast.LENGTH_SHORT).show();
 
