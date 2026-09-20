@@ -21,7 +21,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * Activity for displaying the user's own donor profile.
+ */
 public class UserDonorProfileActivity extends AppCompatActivity {
+
+    private static final String TAG = "UserDonorProfileActivity";
 
 
     private TextView tvDonorName;
@@ -39,6 +44,7 @@ public class UserDonorProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate: UserDonorProfileActivity started");
         setContentView(R.layout.activity_user_donor_profile);
 
         // Initialize TextViews
@@ -80,9 +86,13 @@ public class UserDonorProfileActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d(TAG, "onResume: Refreshing donor profile");
         loadDonorProfile();
     }
 
+    /**
+     * Shows a confirmation dialog before deleting the donor profile.
+     */
     private void showDeleteConfirmation() {
         new AlertDialog.Builder(this)
                 .setTitle("Delete Donor Profile")
@@ -97,27 +107,38 @@ public class UserDonorProfileActivity extends AppCompatActivity {
                 .show();
     }
 
+    /**
+     * Deletes the user's donor profile by calling the API.
+     */
     private void deleteProfile() {
+        Log.d(TAG, "deleteProfile: Attempting to delete donor profile");
         apiServices.deleteDonorProfile().enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 if (response.isSuccessful()) {
+                    Log.d(TAG, "onResponse: Donor profile deleted successfully");
                     Toast.makeText(UserDonorProfileActivity.this, "Profile Deleted", Toast.LENGTH_SHORT).show();
                     finish();
                 } else {
+                    Log.e(TAG, "onResponse: Delete failed. Code: " + response.code());
                     Toast.makeText(UserDonorProfileActivity.this, "Delete failed", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
+                Log.e(TAG, "onFailure: Error deleting donor profile", t);
                 Toast.makeText(UserDonorProfileActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
+    /**
+     * Loads the user's donor profile details from the API.
+     */
     private void loadDonorProfile() {
 
+        Log.d(TAG, "loadDonorProfile: Fetching donor profile");
         apiServices.getMyDonorProfile().enqueue(
                 new Callback<DonorResponse>() {
 
@@ -127,6 +148,7 @@ public class UserDonorProfileActivity extends AppCompatActivity {
                         if (response.isSuccessful() && response.body() != null) {
 
                             DonorResponse donor = response.body();
+                            Log.d(TAG, "onResponse: Donor profile loaded successfully");
 
                             // Set donor information
                             tvDonorName.setText(donor.getDonorName());

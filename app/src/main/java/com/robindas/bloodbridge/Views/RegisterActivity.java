@@ -22,7 +22,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * Activity for user registration.
+ */
 public class RegisterActivity extends AppCompatActivity {
+
+    private static final String TAG = "RegisterActivity";
 
     //Widgets
     private EditText etUsername;
@@ -36,6 +41,7 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate: RegisterActivity started");
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_register);
 
@@ -62,13 +68,16 @@ public class RegisterActivity extends AppCompatActivity {
                 .create(APIServices.class);
     }
 
+    /**
+     * Processes user registration by validating input and calling the registration API.
+     */
     private void Registration() {
 
         String username = etUsername.getText().toString().trim();
         String useremail = etUserEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
 
-        if (useremail.isEmpty()){
+        if (username.isEmpty()){
             etUsername.setError("Enter name");
             return;
         }
@@ -81,7 +90,7 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-
+        Log.d(TAG, "Registration: Attempting register for " + username);
         regiBtn.setEnabled(false);
 
         RegisterRequest request = new RegisterRequest(username, useremail, password);
@@ -93,12 +102,12 @@ public class RegisterActivity extends AppCompatActivity {
                 regiBtn.setEnabled(true);
 
                 if (response.isSuccessful()){
-                    Log.e("Register", "Register Success: " + response.body());
+                    Log.d(TAG, "onResponse: Register Success: " + response.body());
                     Toast.makeText(RegisterActivity.this, "Register Successful", Toast.LENGTH_SHORT).show();
+                    finish();
                 }
                 else {
-
-                    Log.e("Register ", "Error message: " + response.body());
+                    Log.e(TAG, "onResponse: Register failed. Code: " + response.code() + ", Message: " + response.message());
                     Toast.makeText(RegisterActivity.this, "Register failed try again", Toast.LENGTH_SHORT).show();
                 }
 
@@ -108,9 +117,7 @@ public class RegisterActivity extends AppCompatActivity {
             public void onFailure(Call<String> call, Throwable throwable) {
 
                 regiBtn.setEnabled(true);
-
-                Log.e("Register Error ", "Register Failed ", throwable);
-
+                Log.e(TAG, "onFailure: Register Failed", throwable);
                 Toast.makeText(RegisterActivity.this, "Network error " + throwable.getMessage(), Toast.LENGTH_SHORT).show();
 
             }

@@ -24,7 +24,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * Activity for user login.
+ */
 public class LoginActivity extends AppCompatActivity {
+
+    private static final String TAG = "LoginActivity";
 
     //Widgets
     private EditText etUsername;
@@ -38,6 +43,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate: LoginActivity started");
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
 
@@ -68,6 +74,9 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Processes user login by validating input and calling the login API.
+     */
     private void LoginProcess() {
 
         String username = etUsername.getText().toString().trim();
@@ -90,7 +99,7 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-
+        Log.d(TAG, "LoginProcess: Attempting login for " + username);
         LoginRequest request = new LoginRequest(username, useremail, passwords);
 
         apiServices.login(request).enqueue(new Callback<String>() {
@@ -107,11 +116,9 @@ public class LoginActivity extends AppCompatActivity {
                     //save token
                     tokenManager.saveToken(token);
                     //Check Token save
-                    Log.d("JWT_Token: ", tokenManager.getToken());
+                    Log.d(TAG, "onResponse: JWT_Token saved: " + tokenManager.getToken());
 
                     Toast.makeText(LoginActivity.this, "login successful!", Toast.LENGTH_SHORT).show();
-
-                    System.out.println("JWT " + token);
 
                     Intent intent = new Intent(LoginActivity.this, UserProfileActivity.class);
                     startActivity(intent);
@@ -119,7 +126,7 @@ public class LoginActivity extends AppCompatActivity {
                     finish();
                 }
                 else {
-                    Log.e("Login Failed ", "Incorrect Password");
+                    Log.e(TAG, "onResponse: Login Failed. Code: " + response.code());
                     Toast.makeText(LoginActivity.this, "login Failed " + response.code(), Toast.LENGTH_SHORT).show();
                 }
 
@@ -129,9 +136,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onFailure(Call<String> call, Throwable throwable) {
 
                 loginBtn.setEnabled(true);
-
-                Log.e("Login Error", "Login Failed" + throwable);
-
+                Log.e(TAG, "onFailure: Login request failed", throwable);
                 Toast.makeText(LoginActivity.this, "Network Error! Check Your Connection" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
 
             }

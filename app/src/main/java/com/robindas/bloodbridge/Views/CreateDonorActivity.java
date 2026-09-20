@@ -3,6 +3,7 @@ package com.robindas.bloodbridge.Views;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -24,7 +25,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * Activity for creating a donor profile.
+ */
 public class CreateDonorActivity extends AppCompatActivity {
+
+    private static final String TAG = "CreateDonorActivity";
 
     private EditText etBloodGroup, etCity, etDistrict, etPhone, etLastDonateDate;
     private CheckBox cbAvailable;
@@ -34,6 +40,7 @@ public class CreateDonorActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate: CreateDonorActivity started");
         setContentView(R.layout.activity_create_donor);
 
         etBloodGroup = findViewById(R.id.etBloodGroup);
@@ -61,6 +68,9 @@ public class CreateDonorActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Shows a DatePicker dialog to select the last donation date.
+     */
     private void showDatePicker() {
         final Calendar c = Calendar.getInstance();
         int year = c.get(Calendar.YEAR);
@@ -78,6 +88,9 @@ public class CreateDonorActivity extends AppCompatActivity {
         datePickerDialog.show();
     }
 
+    /**
+     * Creates a new donor profile by calling the API after validation.
+     */
     private void createDonor() {
         String blood = etBloodGroup.getText().toString().trim();
         String city = etCity.getText().toString().trim();
@@ -91,12 +104,14 @@ public class CreateDonorActivity extends AppCompatActivity {
             return;
         }
 
+        Log.d(TAG, "createDonor: Attempting to create donor profile");
         DonorRequest request = new DonorRequest(blood, city, district, phone, lastDate, available);
 
         apiServices.createDonor(request).enqueue(new Callback<DonorResponse>() {
             @Override
             public void onResponse(Call<DonorResponse> call, Response<DonorResponse> response) {
                 if (response.isSuccessful()) {
+                    Log.d(TAG, "onResponse: Donor profile created successfully");
                     Toast.makeText(CreateDonorActivity.this, "Donor Profile Created!", Toast.LENGTH_SHORT).show();
                     
                     // Navigate to Donor Profile Activity
@@ -104,12 +119,14 @@ public class CreateDonorActivity extends AppCompatActivity {
                     startActivity(intent);
                     finish();
                 } else {
+                    Log.e(TAG, "onResponse: Failed to create donor profile. Code: " + response.code());
                     Toast.makeText(CreateDonorActivity.this, "Failed to create profile: " + response.code(), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<DonorResponse> call, Throwable t) {
+                Log.e(TAG, "onFailure: Error creating donor profile", t);
                 Toast.makeText(CreateDonorActivity.this, "Network Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });

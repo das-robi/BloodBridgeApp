@@ -2,6 +2,7 @@ package com.robindas.bloodbridge.Views;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -23,7 +24,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * Activity for updating the user's donor profile.
+ */
 public class UpdateDonorActivity extends AppCompatActivity {
+
+    private static final String TAG = "UpdateDonorActivity";
 
     private EditText etBloodGroup, etCity, etDistrict, etPhone, etLastDonateDate;
     private CheckBox cbAvailable;
@@ -33,6 +39,7 @@ public class UpdateDonorActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate: UpdateDonorActivity started");
         setContentView(R.layout.activity_update_donor);
 
 //        etName = findViewById(R.id.etUpdateName);
@@ -63,6 +70,9 @@ public class UpdateDonorActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Shows a DatePicker dialog to select the last donation date.
+     */
     private void showDatePicker() {
 
         final Calendar c = Calendar.getInstance();
@@ -82,12 +92,16 @@ public class UpdateDonorActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Loads the current donor profile data into the form.
+     */
     private void loadCurrentData() {
+        Log.d(TAG, "loadCurrentData: Fetching current donor profile");
         apiServices.getMyDonorProfile().enqueue(new Callback<DonorResponse>() {
             @Override
             public void onResponse(Call<DonorResponse> call, Response<DonorResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-
+                    Log.d(TAG, "onResponse: Donor profile data loaded");
                     DonorResponse donor = response.body();
 //                    etName.setText(donor.getDonorName());
                     etBloodGroup.setText(donor.getBldGroup());
@@ -97,16 +111,22 @@ public class UpdateDonorActivity extends AppCompatActivity {
                     etLastDonateDate.setText(donor.getLastDonateDate());
                     cbAvailable.setChecked(donor.isAvailable());
 
+                } else {
+                    Log.e(TAG, "onResponse: Failed to load donor profile. Code: " + response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<DonorResponse> call, Throwable t) {
+                Log.e(TAG, "onFailure: Error loading donor profile", t);
                 Toast.makeText(UpdateDonorActivity.this, "Failed to load data", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
+    /**
+     * Updates the donor profile by calling the API.
+     */
     private void updateDonor() {
 
 //        String name = etName.getText().toString().trim();
@@ -117,6 +137,7 @@ public class UpdateDonorActivity extends AppCompatActivity {
         String lastDate = etLastDonateDate.getText().toString().trim();
         boolean available = cbAvailable.isChecked();
 
+        Log.d(TAG, "updateDonor: Attempting to update donor profile");
         DonorRequest request = new DonorRequest(blood, city, district, phone, lastDate, available);
 
         apiServices.updateProfile(request).enqueue(new Callback<DonorResponse>() {
@@ -125,10 +146,12 @@ public class UpdateDonorActivity extends AppCompatActivity {
             public void onResponse(Call<DonorResponse> call, Response<DonorResponse> response) {
 
                 if (response.isSuccessful()) {
+                    Log.d(TAG, "onResponse: Donor profile updated successfully");
                     Toast.makeText(UpdateDonorActivity.this, "Profile Updated!", Toast.LENGTH_SHORT).show();
                     finish();
                 }
                 else {
+                    Log.e(TAG, "onResponse: Update failed. Code: " + response.code());
                     Toast.makeText(UpdateDonorActivity.this, "Update Failed", Toast.LENGTH_SHORT).show();
                 }
 
@@ -136,6 +159,7 @@ public class UpdateDonorActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<DonorResponse> call, Throwable t) {
+                Log.e(TAG, "onFailure: Error updating donor profile", t);
                 Toast.makeText(UpdateDonorActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });

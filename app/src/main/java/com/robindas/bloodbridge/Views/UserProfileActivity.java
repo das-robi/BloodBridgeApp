@@ -24,18 +24,29 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * Activity for displaying the user's main profile and dashboard.
+ */
 public class UserProfileActivity extends AppCompatActivity {
+
+    private static final String TAG = "UserProfileActivity";
 
     private TextView tvUsername;
     private TextView tvEmail;
     private Button donBtn;
+    private Button createReqBtn;
+    private Button viewReqBtn;
+    private Button findDonorsBtn;
+    private Button notificationsBtn;
 
     private APIServices apiServices;
     private boolean hasDonorProfile = false;
+    private String currentUserName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate: UserProfileActivity started");
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_user_profile);
 
@@ -43,6 +54,10 @@ public class UserProfileActivity extends AppCompatActivity {
         tvUsername = findViewById(R.id.tvUsername);
         tvEmail = findViewById(R.id.tvEmail);
         donBtn = findViewById(R.id.btnDonorProfile);
+        createReqBtn = findViewById(R.id.btnCreateBloodRequest);
+        viewReqBtn = findViewById(R.id.btnViewAllRequests);
+        findDonorsBtn = findViewById(R.id.btnFindDonors);
+        notificationsBtn = findViewById(R.id.btnNotifications);
 
         donBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,6 +72,37 @@ public class UserProfileActivity extends AppCompatActivity {
             }
         });
 
+        createReqBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(UserProfileActivity.this, CreateBloodRequestActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        viewReqBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(UserProfileActivity.this, BloodRequestListActivity.class);
+                intent.putExtra("USER_NAME", currentUserName);
+                startActivity(intent);
+            }
+        });
+
+        findDonorsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(UserProfileActivity.this, DonorSearchActivity.class));
+            }
+        });
+
+        notificationsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(UserProfileActivity.this, NotificationActivity.class));
+            }
+        });
+
         apiServices = RetrofitClient
                 .getRetrofitInstance(this)
                 .create(APIServices.class);
@@ -67,17 +113,23 @@ public class UserProfileActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d(TAG, "onResume: Checking donor status");
         checkDonorStatus();
     }
 
+    /**
+     * Checks if the user has a donor profile to update the UI accordingly.
+     */
     private void checkDonorStatus() {
         apiServices.getMyDonorProfile().enqueue(new Callback<DonorResponse>() {
             @Override
             public void onResponse(Call<DonorResponse> call, Response<DonorResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
+                    Log.d(TAG, "onResponse: User has a donor profile");
                     hasDonorProfile = true;
                     donBtn.setText("Check Donor Profile");
                 } else {
+                    Log.d(TAG, "onResponse: User does not have a donor profile");
                     hasDonorProfile = false;
                     donBtn.setText("Create Donor Profile");
                 }
@@ -85,14 +137,19 @@ public class UserProfileActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<DonorResponse> call, Throwable t) {
+                Log.e(TAG, "onFailure: Error checking donor status", t);
                 hasDonorProfile = false;
                 donBtn.setText("Create Donor Profile");
             }
         });
     }
 
+    /**
+     * Loads the user's basic profile information.
+     */
     private void loadProfile() {
 
+        Log.d(TAG, "loadProfile: Fetching user profile");
         apiServices.getProfile().enqueue(new Callback<UserProfile>() {
             @Override
             public void onResponse(Call<UserProfile> call, Response<UserProfile> response) {
@@ -100,24 +157,24 @@ public class UserProfileActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null){
 
                     UserProfile userProfile = response.body();
+                    currentUserName = userProfile.getUserName();
+                    Log.d(TAG, "onResponse: Profile loaded for " + currentUserName);
 
                     tvUsername.setText(userProfile.getUserName());
                     tvEmail.setText(userProfile.getUserEmail());
 
-                    Log.d("UserProfile ", "Profile open successfully");
                 }
                 else {
+                    Log.e(TAG, "onResponse: Failed to load profile. Code: " + response.code());
                     Toast.makeText(UserProfileActivity.this, "Failed to load Profile", Toast.LENGTH_SHORT).show();
-                    Log.e("Profile", "Response Code" + response.code());
                 }
 
             }
 
             @Override
             public void onFailure(Call<UserProfile> call, Throwable throwable) {
-
+                Log.e(TAG, "onFailure: Error loading user profile", throwable);
                 Toast.makeText(UserProfileActivity.this, "Network Error", Toast.LENGTH_SHORT).show();
-                Log.e("Profile_Error", "Profile request failed", throwable);
             }
         });
 
