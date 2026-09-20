@@ -1,5 +1,6 @@
-package com.robindas.bloodbridge;
+package com.robindas.bloodbridge.Views;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -16,7 +17,8 @@ import androidx.core.view.WindowInsetsCompat;
 import com.robindas.bloodbridge.API.APIServices;
 import com.robindas.bloodbridge.API.RetrofitClient;
 import com.robindas.bloodbridge.API.TokenManager;
-import com.robindas.bloodbridge.Model.LoginRequest;
+import com.robindas.bloodbridge.DTO.LoginRequest;
+import com.robindas.bloodbridge.R;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -110,6 +112,11 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this, "login successful!", Toast.LENGTH_SHORT).show();
 
                     System.out.println("JWT " + token);
+
+                    Intent intent = new Intent(LoginActivity.this, UserProfileActivity.class);
+                    startActivity(intent);
+
+                    finish();
                 }
                 else {
                     Log.e("Login Failed ", "Incorrect Password");

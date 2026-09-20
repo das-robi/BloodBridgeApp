@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Become a Donor"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="24dp" />
+
+<!--        <EditText-->
+<!--            android:id="@+id/etDonorName"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:hint="Full Name"-->
+<!--            android:inputType="textPersonName"-->
+<!--            android:layout_marginBottom="12dp" />-->
+
+        <EditText
+            android:id="@+id/etBloodGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Blood Group (e.g. A+)"
+            android:layout_marginBottom="12dp" />
+
+        <EditText
+            android:id="@+id/etCity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="City"
+            android:layout_marginBottom="12dp" />
+
+        <EditText
+            android:id="@+id/etDistrict"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="District"
+            android:layout_marginBottom="12dp" />
+
+        <EditText
+            android:id="@+id/etPhone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Phone Number"
+            android:inputType="phone"
+            android:layout_marginBottom="12dp" />
+
+        <EditText
+            android:id="@+id/etLastDonateDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Last Donation Date (YYYY-MM-DD)"
+            android:focusable="false"
+            android:clickable="true"
+            android:layout_marginBottom="12dp" />
+
+        <CheckBox
+            android:id="@+id/cbAvailable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Available for Donation"
+            android:checked="true"
+            android:layout_marginBottom="24dp" />
+
+        <Button
+            android:id="@+id/btnSubmitDonor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Create Donor Profile" />
+
+    </LinearLayout>
+</ScrollView>

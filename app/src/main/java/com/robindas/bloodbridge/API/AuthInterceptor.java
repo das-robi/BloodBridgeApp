@@ -1,6 +1,7 @@
 package com.robindas.bloodbridge.API;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -21,26 +22,35 @@ public class AuthInterceptor implements Interceptor {
 
     @NonNull
     @Override
-    public Response intercept(@NonNull Chain chain) throws IOException {
+    public Response intercept(Chain chain) throws IOException {
 
-        // Get JWT token from TokenManager and store in a String value
-        String token = tokenManager.getToken();
-
-        //Retrofit request
         Request originalRequest = chain.request();
 
-        Request.Builder requestBuilder = originalRequest.newBuilder();
+        String path = originalRequest.url().encodedPath();
 
-        //Check here if token is not null or empty and then set bearer token
-        if (token != null && token.isEmpty()){
-            requestBuilder.addHeader(
-                    "Authentication",
-                    "Bearer " + token
-            );
+        Request.Builder requestBuilder =
+                originalRequest.newBuilder();
+
+        // Don't attach JWT to login/register
+        if (!path.equals("/api/v1/auth/login")
+                && !path.equals("/api/v1/auth/register")) {
+
+            String token = tokenManager.getToken();
+
+            if (token != null && !token.isEmpty()) {
+
+                requestBuilder.addHeader(
+                        "Authorization",
+                        "Bearer " + token
+                );
+
+                Log.d(
+                        "AUTH_INTERCEPTOR",
+                        "Authorization header added"
+                );
+            }
         }
 
-        Request newRequest = requestBuilder.build();
-
-        return chain.proceed(newRequest);
+        return chain.proceed(requestBuilder.build());
     }
 }

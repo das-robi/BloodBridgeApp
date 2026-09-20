@@ -1,4 +1,4 @@
-package com.robindas.bloodbridge;
+package com.robindas.bloodbridge.Views;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -15,7 +15,8 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.robindas.bloodbridge.API.APIServices;
 import com.robindas.bloodbridge.API.RetrofitClient;
-import com.robindas.bloodbridge.Model.RegisterRequest;
+import com.robindas.bloodbridge.DTO.RegisterRequest;
+import com.robindas.bloodbridge.R;
 
 import retrofit2.Call;
 import retrofit2.Callback;

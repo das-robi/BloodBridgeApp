@@ -1,13 +1,13 @@
-package com.robindas.bloodbridge.Model;
+package com.robindas.bloodbridge.DTO;
 
-public class LoginRequest {
+public class RegisterRequest {
 
     private String userName;
     private String userEmail;
     private String passWord;
 
-    public LoginRequest(String userName, String userEmail, String passWord) {
-        this.userName = userName;
+    public RegisterRequest(String username, String userEmail, String passWord) {
+        this.userName = username;
         this.userEmail = userEmail;
         this.passWord = passWord;
     }
