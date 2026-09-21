@@ -15,15 +15,17 @@
         android:theme="@style/Theme.BloodBridge"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".Views.MainActivity"
-            android:exported="true"
-            android:windowSoftInputMode="adjustResize">
+            android:name=".Views.SplashActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".Views.MainActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".Views.LoginActivity"
             android:exported="false"
@@ -66,6 +68,22 @@
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".Views.DonorSearchActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".Views.AdminDashboardActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".Views.AdminUserListActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".Views.AdminDonorListActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".Views.AdminBloodRequestListActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
     </application>

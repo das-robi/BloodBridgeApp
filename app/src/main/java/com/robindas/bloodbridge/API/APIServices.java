@@ -5,8 +5,10 @@ import com.robindas.bloodbridge.DTO.BloodRequestResponse;
 import com.robindas.bloodbridge.DTO.DonorRequest;
 import com.robindas.bloodbridge.DTO.DonorResponse;
 import com.robindas.bloodbridge.DTO.LoginRequest;
+import com.robindas.bloodbridge.DTO.PaginatedResponse;
 import com.robindas.bloodbridge.DTO.RegisterRequest;
 import com.robindas.bloodbridge.DTO.NotificationResponse;
+import com.robindas.bloodbridge.DTO.UserResponse;
 import com.robindas.bloodbridge.Model.UserProfile;
 
 import java.util.List;
@@ -19,6 +21,7 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
 
 /**
@@ -132,4 +135,29 @@ public interface APIServices {
      */
     @GET("api/v1/donors/search")
     Call<List<DonorResponse>> searchDonors(@QueryMap Map<String, String> filters);
+
+    // Admin Endpoints
+    @GET("api/v1/admin/users")
+    Call<PaginatedResponse<UserResponse>> getAllUsers(
+            @Query("page") int page,
+            @Query("size") int size,
+            @Query("sortBy") String sortBy,
+            @Query("ascending") String ascending
+    );
+
+    @GET("api/v1/admin/donors")
+    Call<PaginatedResponse<DonorResponse>> getAllDonors(
+            @Query("page") int page,
+            @Query("size") int size,
+            @Query("sortBy") String sortBy,
+            @Query("ascending") String ascending
+    );
+
+    @GET("api/v1/admin/blood-request")
+    Call<PaginatedResponse<BloodRequestResponse>> getAllBloodRequestsAdmin(
+            @Query("page") int page,
+            @Query("size") int size,
+            @Query("sortBy") String sortBy,
+            @Query("ascending") String ascending
+    );
 }

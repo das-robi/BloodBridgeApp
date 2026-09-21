@@ -18,6 +18,7 @@ import com.robindas.bloodbridge.API.APIServices;
 import com.robindas.bloodbridge.API.RetrofitClient;
 import com.robindas.bloodbridge.API.TokenManager;
 import com.robindas.bloodbridge.DTO.LoginRequest;
+import com.robindas.bloodbridge.Model.UserProfile;
 import com.robindas.bloodbridge.R;
 
 import retrofit2.Call;
@@ -59,6 +60,11 @@ public class LoginActivity extends AppCompatActivity {
         etUserEmail = findViewById(R.id.useremail);
         etPassword = findViewById(R.id.passWord);
         loginBtn = findViewById(R.id.lgnBtn);
+
+        findViewById(R.id.ivBack).setOnClickListener(v -> finish());
+        findViewById(R.id.tvForgotPassword).setOnClickListener(v -> {
+            Toast.makeText(this, "Forgot Password feature coming soon!", Toast.LENGTH_SHORT).show();
+        });
 
 
         apiServices = RetrofitClient.getRetrofitInstance(this)
@@ -112,18 +118,17 @@ public class LoginActivity extends AppCompatActivity {
 
                     String token = response.body();
 
+                    // CLEANUP: Remove double quotes if Retrofit/Scalars added them (common cause of 401/403)
+                    if (token.startsWith("\"") && token.endsWith("\"")) {
+                        token = token.substring(1, token.length() - 1);
+                    }
+
                     TokenManager tokenManager = new TokenManager(LoginActivity.this);
                     //save token
                     tokenManager.saveToken(token);
-                    //Check Token save
-                    Log.d(TAG, "onResponse: JWT_Token saved: " + tokenManager.getToken());
+                    Log.d(TAG, "onResponse: JWT_Token cleaned and saved");
 
-                    Toast.makeText(LoginActivity.this, "login successful!", Toast.LENGTH_SHORT).show();
-
-                    Intent intent = new Intent(LoginActivity.this, UserProfileActivity.class);
-                    startActivity(intent);
-
-                    finish();
+                    fetchProfileAndRedirect();
                 }
                 else {
                     Log.e(TAG, "onResponse: Login Failed. Code: " + response.code());
@@ -139,6 +144,51 @@ public class LoginActivity extends AppCompatActivity {
                 Log.e(TAG, "onFailure: Login request failed", throwable);
                 Toast.makeText(LoginActivity.this, "Network Error! Check Your Connection" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
 
+            }
+        });
+    }
+
+    /**
+     * Fetches the user profile after successful login to redirect based on role.
+     */
+    private void fetchProfileAndRedirect() {
+        apiServices.getProfile().enqueue(new Callback<UserProfile>() {
+
+            @Override
+            public void onResponse(Call<UserProfile> call, Response<UserProfile> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    UserProfile profile = response.body();
+                    String role = profile.getRole();
+                    Log.d(TAG, "fetchProfileAndRedirect: User role is " + role);
+
+                    Intent intent;
+                    // Check for both ADMIN and ROLE_ADMIN to be safe
+                    if ("ADMIN".equalsIgnoreCase(role) || "ROLE_ADMIN".equalsIgnoreCase(role)) {
+                        Log.d(TAG, "fetchProfileAndRedirect: Redirecting to Admin Dashboard");
+                        intent = new Intent(LoginActivity.this, AdminDashboardActivity.class);
+                    } else {
+                        Log.d(TAG, "fetchProfileAndRedirect: Redirecting to User Profile");
+                        intent = new Intent(LoginActivity.this, UserProfileActivity.class);
+                    }
+
+                    Toast.makeText(LoginActivity.this, "Login successful!", Toast.LENGTH_SHORT).show();
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Log.e(TAG, "fetchProfileAndRedirect: Failed to fetch profile. Code: " + response.code());
+                    if (response.code() == 403) {
+                        Toast.makeText(LoginActivity.this, "Access Denied: You may not have permission to view your profile.", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(LoginActivity.this, "Error fetching profile information.", Toast.LENGTH_SHORT).show();
+                    }
+                    // Stay on login screen so user knows there is a role/permission issue
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserProfile> call, Throwable t) {
+                Log.e(TAG, "fetchProfileAndRedirect: Network error", t);
+                Toast.makeText(LoginActivity.this, "Network error during profile fetch.", Toast.LENGTH_SHORT).show();
             }
         });
     }

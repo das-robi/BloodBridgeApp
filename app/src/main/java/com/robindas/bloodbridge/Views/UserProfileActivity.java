@@ -38,6 +38,7 @@ public class UserProfileActivity extends AppCompatActivity {
     private Button viewReqBtn;
     private Button findDonorsBtn;
     private Button notificationsBtn;
+    private Button adminBtn;
 
     private APIServices apiServices;
     private boolean hasDonorProfile = false;
@@ -58,6 +59,7 @@ public class UserProfileActivity extends AppCompatActivity {
         viewReqBtn = findViewById(R.id.btnViewAllRequests);
         findDonorsBtn = findViewById(R.id.btnFindDonors);
         notificationsBtn = findViewById(R.id.btnNotifications);
+        adminBtn = findViewById(R.id.btnAdminDashboard);
 
         donBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,6 +102,13 @@ public class UserProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(UserProfileActivity.this, NotificationActivity.class));
+            }
+        });
+
+        adminBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(UserProfileActivity.this, AdminDashboardActivity.class));
             }
         });
 
@@ -162,6 +171,12 @@ public class UserProfileActivity extends AppCompatActivity {
 
                     tvUsername.setText(userProfile.getUserName());
                     tvEmail.setText(userProfile.getUserEmail());
+
+                    if ("ADMIN".equals(userProfile.getRole())) {
+                        adminBtn.setVisibility(View.VISIBLE);
+                    } else {
+                        adminBtn.setVisibility(View.GONE);
+                    }
 
                 }
                 else {

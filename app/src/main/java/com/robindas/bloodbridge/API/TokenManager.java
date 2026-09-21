@@ -23,7 +23,7 @@ public class TokenManager {
     public void saveToken(String token){
         sharedPreferences.edit()
                 .putString(KEY_TOKEN, token)
-                .apply();
+                .commit(); // Using commit() instead of apply() for synchronous write
     }
 
     //Get Token

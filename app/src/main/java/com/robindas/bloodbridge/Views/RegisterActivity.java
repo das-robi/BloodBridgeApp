@@ -56,6 +56,9 @@ public class RegisterActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.passWord);
         regiBtn = findViewById(R.id.lgnBtn);
 
+        findViewById(R.id.ivBackReg).setOnClickListener(v -> finish());
+        findViewById(R.id.tvSignIn).setOnClickListener(v -> finish());
+
         regiBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -44,10 +44,10 @@ public class AuthInterceptor implements Interceptor {
                         "Bearer " + token
                 );
 
-                Log.d(
-                        "AUTH_INTERCEPTOR",
-                        "Authorization header added"
-                );
+                Log.d("AUTH_INTERCEPTOR", "Header added for path: " + path);
+                Log.d("AUTH_INTERCEPTOR", "Token: " + token.substring(0, Math.min(token.length(), 10)) + "...");
+            } else {
+                Log.w("AUTH_INTERCEPTOR", "No token found for path: " + path);
             }
         }
 

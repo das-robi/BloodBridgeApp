@@ -1,30 +1,22 @@
-package com.robindas.bloodbridge.Model;
+package com.robindas.bloodbridge.DTO;
 
 /**
- * Model class representing a user's profile.
+ * DTO for user information returned in admin lists.
  */
-public class UserProfile {
+public class UserResponse {
 
     private int userId;
     private String userName;
-    private String passWord;
     private String userEmail;
-    private String role; // Added role field for authorization
+    private String role;
 
-    public UserProfile() {}
+    public UserResponse() {
 
-    public UserProfile(int userId, String userName, String passWord, String userEmail, String role) {
-        this.userId = userId;
-        this.userName = userName;
-        this.passWord = passWord;
-        this.userEmail = userEmail;
-        this.role = role;
     }
 
     public int getUserId() {
         return userId;
     }
-
     public void setUserId(int userId) {
         this.userId = userId;
     }
@@ -32,23 +24,13 @@ public class UserProfile {
     public String getUserName() {
         return userName;
     }
-
     public void setUserName(String userName) {
         this.userName = userName;
-    }
-
-    public String getPassWord() {
-        return passWord;
-    }
-
-    public void setPassWord(String passWord) {
-        this.passWord = passWord;
     }
 
     public String getUserEmail() {
         return userEmail;
     }
-
     public void setUserEmail(String userEmail) {
         this.userEmail = userEmail;
     }
@@ -56,7 +38,6 @@ public class UserProfile {
     public String getRole() {
         return role;
     }
-
     public void setRole(String role) {
         this.role = role;
     }
