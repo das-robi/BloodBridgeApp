@@ -29,49 +29,55 @@
             android:textSize="18sp" />
 
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnDonorProfile"
+            style="@style/AppButton.Red"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="24dp"
             android:text="Donor Profile" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCreateBloodRequest"
+            style="@style/AppButton.Red"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:layout_marginTop="16dp"
             android:text="Create Blood Request" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnViewAllRequests"
+            style="@style/AppButton.Red"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:layout_marginTop="16dp"
             android:text="View All Requests" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnFindDonors"
+            style="@style/AppButton.Red"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:layout_marginTop="16dp"
             android:text="Find Donors" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnNotifications"
+            style="@style/AppButton.Red"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:layout_marginTop="16dp"
             android:text="Notifications" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAdminDashboard"
+            style="@style/AppButton.Red"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:layout_marginTop="24dp"
             android:text="Admin Dashboard"
             android:visibility="gone"
-            android:backgroundTint="#FF9800" />
+            app:backgroundTint="#FF9800" />
 
     </LinearLayout>
 

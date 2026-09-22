@@ -13,22 +13,25 @@
         android:textStyle="bold"
         android:layout_marginBottom="32dp" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnManageUsers"
+        style="@style/AppButton.Red"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:text="Manage Users"
         android:layout_marginBottom="16dp" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnManageDonorsAdmin"
+        style="@style/AppButton.Red"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:text="Manage Donors"
         android:layout_marginBottom="16dp" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnAllBloodRequestsAdmin"
+        style="@style/AppButton.Red"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:text="All Blood Requests" />
