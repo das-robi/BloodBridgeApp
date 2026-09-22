@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "556034396317",
+    "project_id": "bloodbridge-ee612",
+    "storage_bucket": "bloodbridge-ee612.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:556034396317:android:fd7b81218717ef79ae0474",
+        "android_client_info": {
+          "package_name": "com.robindas.bloodbridge"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJ17PXLr-L24El9Q8YtAhjprucz81SKUo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -50,5 +51,15 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
     implementation("com.squareup.retrofit2:converter-scalars:2.11.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
+
+    // Import the Firebase BoM
+    implementation(platform("com.google.firebase:firebase-bom:34.19.0"))
+
+
+    // TODO: Add the dependencies for Firebase products you want to use
+    // When using the BoM, don't specify versions in Firebase dependencies
+    implementation("com.google.firebase:firebase-analytics")
+
 
 }
