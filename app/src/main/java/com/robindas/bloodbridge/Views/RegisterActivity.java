@@ -107,6 +107,10 @@ public class RegisterActivity extends AppCompatActivity {
                 if (response.isSuccessful()){
                     Log.d(TAG, "onResponse: Register Success: " + response.body());
                     Toast.makeText(RegisterActivity.this, "Register Successful", Toast.LENGTH_SHORT).show();
+                    
+                    // After register, redirect to Home (assuming login happens automatically or via token)
+                    // Usually you'd log them in or send to Login.
+                    // For now, let's send to Login for security.
                     finish();
                 }
                 else {

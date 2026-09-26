@@ -1,47 +1,143 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:background="#FAFAFA">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Search Donors"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="16dp" />
-
-    <EditText
-        android:id="@+id/etSearchBloodGroup"
+    <!-- Top Bar -->
+    <RelativeLayout
+        android:id="@+id/rlTopBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Blood Group (e.g. A+)" />
+        android:paddingStart="16dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="12dp">
 
-    <EditText
-        android:id="@+id/etSearchCity"
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:background="@drawable/bg_circle_button"
+            android:contentDescription="Back"
+            android:padding="8dp"
+            android:src="@drawable/ic_arrow_back_black" />
+
+        <TextView
+            android:id="@+id/tvHeaderTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="Find Donors"
+            android:textColor="#111827"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+    <!-- Filter Bar (Horizontal Scroll) -->
+    <HorizontalScrollView
+        android:id="@+id/hsvFilters"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="City" />
+        android:layout_below="@id/rlTopBar"
+        android:scrollbars="none"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="12dp"
+        android:clipToPadding="false">
 
-    <EditText
-        android:id="@+id/etSearchDistrict"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="District" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/btnSearchSubmit"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Search"
-        android:layout_marginTop="8dp" />
+            <!-- Location Filter Pill -->
+            <TextView
+                android:id="@+id/tvFilterLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_filter_pill_red"
+                android:drawableEnd="@drawable/ic_arrow_down_white"
+                android:drawablePadding="6dp"
+                android:paddingStart="16dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="14dp"
+                android:paddingBottom="10dp"
+                android:text="Location"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
+            <!-- Blood Group Filter Pill -->
+            <TextView
+                android:id="@+id/tvFilterBloodGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_filter_pill_white"
+                android:drawableEnd="@drawable/ic_arrow_down"
+                android:drawablePadding="6dp"
+                android:paddingStart="16dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="14dp"
+                android:paddingBottom="10dp"
+                android:text="Blood Group"
+                android:textColor="#374151"
+                android:textSize="14sp" />
+
+            <!-- Availability Filter Pill -->
+            <TextView
+                android:id="@+id/tvFilterAvailability"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_filter_pill_white"
+                android:drawableEnd="@drawable/ic_arrow_down"
+                android:drawablePadding="6dp"
+                android:paddingStart="16dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="14dp"
+                android:paddingBottom="10dp"
+                android:text="Availability"
+                android:textColor="#374151"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <!-- Donor Results List -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvDonorSearchResults"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="16dp" />
+        android:layout_below="@id/hsvFilters"
+        android:layout_above="@id/btnLoadMoreDonors"
+        android:clipToPadding="false"
+        android:paddingTop="4dp"
+        android:paddingBottom="8dp" />
 
-</LinearLayout>
+    <!-- Load More Donors Button at Bottom -->
+    <TextView
+        android:id="@+id/btnLoadMoreDonors"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_load_more"
+        android:drawableEnd="@drawable/ic_arrow_down"
+        android:gravity="center"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:text="Load More Donors"
+        android:textColor="#374151"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+</RelativeLayout>

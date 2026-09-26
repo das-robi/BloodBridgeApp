@@ -167,8 +167,8 @@ public class LoginActivity extends AppCompatActivity {
                         Log.d(TAG, "fetchProfileAndRedirect: Redirecting to Admin Dashboard");
                         intent = new Intent(LoginActivity.this, AdminDashboardActivity.class);
                     } else {
-                        Log.d(TAG, "fetchProfileAndRedirect: Redirecting to User Profile");
-                        intent = new Intent(LoginActivity.this, UserProfileActivity.class);
+                        Log.d(TAG, "fetchProfileAndRedirect: Redirecting to Home Dashboard");
+                        intent = new Intent(LoginActivity.this, HomeActivity.class);
                     }
 
                     Toast.makeText(LoginActivity.this, "Login successful!", Toast.LENGTH_SHORT).show();

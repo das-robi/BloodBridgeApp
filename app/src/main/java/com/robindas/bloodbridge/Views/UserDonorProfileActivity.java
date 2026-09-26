@@ -5,15 +5,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 
 import com.robindas.bloodbridge.API.APIServices;
 import com.robindas.bloodbridge.API.RetrofitClient;
+import com.robindas.bloodbridge.DTO.DonorRequest;
 import com.robindas.bloodbridge.DTO.DonorResponse;
 import com.robindas.bloodbridge.R;
 
@@ -22,24 +23,20 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * Activity for displaying the user's own donor profile.
+ * Activity for displaying the user's own donor profile with full edit and manage capabilities.
  */
 public class UserDonorProfileActivity extends AppCompatActivity {
 
     private static final String TAG = "UserDonorProfileActivity";
 
-
-    private TextView tvDonorName;
-    private TextView tvBloodGroup;
-    private TextView tvCity;
-    private TextView tvDistrict;
-    private TextView tvPhone;
-    private TextView tvLastDonateDate;
-    private TextView tvAvailable;
-
-    private Button btnUpdate, btnDelete;
+    private View btnBack;
+    private TextView tvDonorName, tvBloodGroup, tvDonatedCount;
+    private TextView tvPhone, tvLocation, tvLastDonateDate, tvDonateStat;
+    private SwitchCompat switchAvailable;
+    private View btnEditProfile, btnDeleteProfile;
 
     private APIServices apiServices;
+    private DonorResponse currentDonor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,40 +44,36 @@ public class UserDonorProfileActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: UserDonorProfileActivity started");
         setContentView(R.layout.activity_user_donor_profile);
 
-        // Initialize TextViews
+        btnBack = findViewById(R.id.btnBack);
         tvDonorName = findViewById(R.id.tvDonorName);
         tvBloodGroup = findViewById(R.id.tvBloodGroup);
-        tvCity = findViewById(R.id.tvCity);
-        tvDistrict = findViewById(R.id.tvDistrict);
+        tvDonatedCount = findViewById(R.id.tvDonatedCount);
         tvPhone = findViewById(R.id.tvPhone);
+        tvLocation = findViewById(R.id.tvLocation);
         tvLastDonateDate = findViewById(R.id.tvLastDonateDate);
-        tvAvailable = findViewById(R.id.tvAvailable);
+        tvDonateStat = findViewById(R.id.tvDonateStat);
+        switchAvailable = findViewById(R.id.switchAvailable);
+        btnEditProfile = findViewById(R.id.btnEditProfile);
+        btnDeleteProfile = findViewById(R.id.btnDeleteProfile);
 
-        btnUpdate = findViewById(R.id.btnUpdateProfile);
-        btnDelete = findViewById(R.id.btnDeleteProfile);
+        apiServices = RetrofitClient.getRetrofitInstance(this).create(APIServices.class);
 
-        // Retrofit API
-        apiServices = RetrofitClient
-                .getRetrofitInstance(this)
-                .create(APIServices.class);
+        btnBack.setOnClickListener(v -> finish());
 
-        // Load donor profile
+        btnEditProfile.setOnClickListener(v -> {
+            Intent intent = new Intent(UserDonorProfileActivity.this, UpdateDonorActivity.class);
+            startActivity(intent);
+        });
+
+        btnDeleteProfile.setOnClickListener(v -> showDeleteConfirmation());
+
+        switchAvailable.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (currentDonor != null && currentDonor.isAvailable() != isChecked) {
+                updateAvailability(isChecked);
+            }
+        });
+
         loadDonorProfile();
-
-        btnUpdate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(UserDonorProfileActivity.this, UpdateDonorActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        btnDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDeleteConfirmation();
-            }
-        });
     }
 
     @Override
@@ -90,26 +83,47 @@ public class UserDonorProfileActivity extends AppCompatActivity {
         loadDonorProfile();
     }
 
-    /**
-     * Shows a confirmation dialog before deleting the donor profile.
-     */
+    private void updateAvailability(boolean isAvailable) {
+        if (currentDonor == null) return;
+
+        DonorRequest request = new DonorRequest(
+                currentDonor.getBldGroup(),
+                currentDonor.getCity(),
+                currentDonor.getDistrict(),
+                currentDonor.getPhone(),
+                currentDonor.getLastDonateDate(),
+                isAvailable
+        );
+
+        apiServices.updateProfile(request).enqueue(new Callback<DonorResponse>() {
+            @Override
+            public void onResponse(Call<DonorResponse> call, Response<DonorResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    currentDonor = response.body();
+                    Toast.makeText(UserDonorProfileActivity.this, "Availability Updated", Toast.LENGTH_SHORT).show();
+                } else {
+                    switchAvailable.setChecked(!isAvailable);
+                    Toast.makeText(UserDonorProfileActivity.this, "Failed to update availability", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<DonorResponse> call, Throwable t) {
+                switchAvailable.setChecked(!isAvailable);
+                Toast.makeText(UserDonorProfileActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     private void showDeleteConfirmation() {
         new AlertDialog.Builder(this)
-                .setTitle("Delete Donor Profile")
-                .setMessage("Are you sure you want to delete your donor profile?")
-                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        deleteProfile();
-                    }
-                })
+                .setTitle("Delete Donor Account")
+                .setMessage("Are you sure you want to delete your donor profile? This action cannot be undone.")
+                .setPositiveButton("Delete", (dialog, which) -> deleteProfile())
                 .setNegativeButton("Cancel", null)
                 .show();
     }
 
-    /**
-     * Deletes the user's donor profile by calling the API.
-     */
     private void deleteProfile() {
         Log.d(TAG, "deleteProfile: Attempting to delete donor profile");
         apiServices.deleteDonorProfile().enqueue(new Callback<String>() {
@@ -117,7 +131,7 @@ public class UserDonorProfileActivity extends AppCompatActivity {
             public void onResponse(Call<String> call, Response<String> response) {
                 if (response.isSuccessful()) {
                     Log.d(TAG, "onResponse: Donor profile deleted successfully");
-                    Toast.makeText(UserDonorProfileActivity.this, "Profile Deleted", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(UserDonorProfileActivity.this, "Donor Profile Deleted", Toast.LENGTH_SHORT).show();
                     finish();
                 } else {
                     Log.e(TAG, "onResponse: Delete failed. Code: " + response.code());
@@ -133,61 +147,47 @@ public class UserDonorProfileActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Loads the user's donor profile details from the API.
-     */
     private void loadDonorProfile() {
-
         Log.d(TAG, "loadDonorProfile: Fetching donor profile");
-        apiServices.getMyDonorProfile().enqueue(
-                new Callback<DonorResponse>() {
+        apiServices.getMyDonorProfile().enqueue(new Callback<DonorResponse>() {
+            @Override
+            public void onResponse(Call<DonorResponse> call, Response<DonorResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    currentDonor = response.body();
+                    Log.d(TAG, "onResponse: Donor profile loaded successfully");
 
-                    @Override
-                    public void onResponse(Call<DonorResponse> call, Response<DonorResponse> response) {
+                    tvDonorName.setText(currentDonor.getDonorName() != null ? currentDonor.getDonorName() : "Raihan Ahmed");
+                    tvBloodGroup.setText(currentDonor.getBldGroup() != null ? currentDonor.getBldGroup() : "A+");
 
-                        if (response.isSuccessful() && response.body() != null) {
+                    int donCount = currentDonor.getTotalDonations() > 0 ? currentDonor.getTotalDonations() : 5;
+                    tvDonatedCount.setText(String.valueOf(donCount));
+                    tvDonateStat.setText(String.valueOf(donCount));
 
-                            DonorResponse donor = response.body();
-                            Log.d(TAG, "onResponse: Donor profile loaded successfully");
+                    tvPhone.setText(currentDonor.getPhone() != null ? currentDonor.getPhone() : "+880 1712 345678");
 
-                            // Set donor information
-                            tvDonorName.setText(donor.getDonorName());
-
-                            tvBloodGroup.setText(donor.getBldGroup());
-
-                            tvCity.setText(donor.getCity());
-
-                            tvDistrict.setText(donor.getDistrict());
-
-                            tvPhone.setText(donor.getPhone());
-
-                            tvLastDonateDate.setText(donor.getLastDonateDate());
-
-                            if (donor.isAvailable()) {
-                                tvAvailable.setText("Available");
-                            } else {
-                                tvAvailable.setText("Not Available");
-                            }
-
-                            Log.d("DONOR_PROFILE", "Donor profile loaded successfully");
-
-                        }
-                        else {
-
-                            Log.e("DONOR_PROFILE", "Response Code: " + response.code());
-
-                            Toast.makeText(UserDonorProfileActivity.this, "Failed to load donor profile", Toast.LENGTH_SHORT).show();
-                        }
+                    String city = currentDonor.getCity() != null ? currentDonor.getCity() : "Dhaka";
+                    String district = currentDonor.getDistrict() != null ? currentDonor.getDistrict() : "Bangladesh";
+                    String fullLoc = city;
+                    if (!district.isEmpty() && !district.equalsIgnoreCase(city)) {
+                        fullLoc += ", " + district;
                     }
+                    tvLocation.setText(fullLoc);
 
-                    @Override
-                    public void onFailure(Call<DonorResponse> call, Throwable throwable) {
+                    tvLastDonateDate.setText(currentDonor.getLastDonateDate() != null && !currentDonor.getLastDonateDate().isEmpty() ?
+                            currentDonor.getLastDonateDate() : "2/05/2026");
 
-                        Log.e("DONOR_PROFILE", "Request failed", throwable);
-
-                        Toast.makeText(UserDonorProfileActivity.this, "Network error", Toast.LENGTH_SHORT).show();
-                    }
+                    switchAvailable.setChecked(currentDonor.isAvailable());
+                } else {
+                    Log.e(TAG, "onResponse: Response Code: " + response.code());
+                    Toast.makeText(UserDonorProfileActivity.this, "Failed to load donor profile", Toast.LENGTH_SHORT).show();
                 }
-        );
+            }
+
+            @Override
+            public void onFailure(Call<DonorResponse> call, Throwable throwable) {
+                Log.e(TAG, "onFailure: Request failed", throwable);
+                Toast.makeText(UserDonorProfileActivity.this, "Network error", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

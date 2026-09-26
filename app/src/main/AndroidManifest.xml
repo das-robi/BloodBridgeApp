@@ -71,6 +71,10 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
+            android:name=".Views.DonorProfileActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
             android:name=".Views.AdminDashboardActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
@@ -80,6 +84,10 @@
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".Views.AdminDonorListActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".Views.HomeActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity

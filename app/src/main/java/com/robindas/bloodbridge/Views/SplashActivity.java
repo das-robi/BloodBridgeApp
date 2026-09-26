@@ -75,7 +75,7 @@ public class SplashActivity extends AppCompatActivity {
                     if ("ADMIN".equalsIgnoreCase(role) || "ROLE_ADMIN".equalsIgnoreCase(role)) {
                         intent = new Intent(SplashActivity.this, AdminDashboardActivity.class);
                     } else {
-                        intent = new Intent(SplashActivity.this, UserProfileActivity.class);
+                        intent = new Intent(SplashActivity.this, HomeActivity.class);
                     }
                     startActivity(intent);
                     finish();

@@ -1,6 +1,8 @@
 package com.robindas.bloodbridge.DTO;
 
-public class DonorResponse {
+import java.io.Serializable;
+
+public class DonorResponse implements Serializable {
 
     private String donorName;
     private String bldGroup;
@@ -9,6 +11,7 @@ public class DonorResponse {
     private String phone;
     private String lastDonateDate;
     private boolean available;
+    private int totalDonations;
 
     public String getDonorName() {
         return donorName;
@@ -64,5 +67,13 @@ public class DonorResponse {
 
     public void setAvailable(boolean available) {
         this.available = available;
+    }
+
+    public int getTotalDonations() {
+        return totalDonations;
+    }
+
+    public void setTotalDonations(int totalDonations) {
+        this.totalDonations = totalDonations;
     }
 }
